@@ -1,0 +1,37 @@
+name: eslint
+
+run-name: Check eslint
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
+
+jobs:
+  eslint:
+    name: eslint
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5.0.0
+
+      - name: Enable corepack (workaround)
+        run: corepack enable
+
+      - name: Setup Node
+        uses: actions/setup-node@v5.0.0
+        with:
+          node-version-file: tests/package.json
+          cache: yarn
+
+      - name: Install Dependencies
+        working-directory: tests
+        run: yarn install --immutable
+
+      - name: Lint
+        working-directory: tests
+        run: yarn lint
